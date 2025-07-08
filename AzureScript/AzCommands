@@ -1,0 +1,4 @@
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/vlaszlo92/PatientApi/main/AzureScript/Grant-TemporarySqlAccess.ps1" -OutFile "tempaccess.ps1"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+pwsh ./tempaccess.ps1
+iex (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/vlaszlo92/PatientApi/main/AzureScript/Grant-TemporarySqlAccess.ps1").Content
