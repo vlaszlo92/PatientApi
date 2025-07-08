@@ -3,6 +3,8 @@ using System.Reflection.Emit;
 using Domain.Entities;
 using Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 
 namespace Infrastructure.Persistence.Data;
 
@@ -20,4 +22,15 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new PatientConfiguration());
     }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            return;
+        }
+
+        optionsBuilder.ConfigureWarnings(w =>
+            w.Ignore(RelationalEventId.PendingModelChangesWarning));
+    }
+
 }
