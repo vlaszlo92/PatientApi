@@ -13,7 +13,8 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 
         builder.Property(p => p.HealthInsuranceNumber)
             .IsRequired()
-            .HasMaxLength(11);
+            .HasMaxLength(11)
+            .HasColumnType("nvarchar(11)");
 
         builder.HasIndex(p => p.HealthInsuranceNumber)
             .IsUnique();
