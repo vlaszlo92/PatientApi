@@ -70,7 +70,7 @@ public class PatientService : IPatientService
             return true;
         }
 
-        var response = await _client.PostAsJsonAsync("api/v1/patients", patient);
+        var response = await _client.PostAsJsonAsync("/api/v1/patients", patient);
 
         if (!response.IsSuccessStatusCode)
         {

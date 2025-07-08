@@ -51,11 +51,8 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
     await DbSeeder.SeedAsync(dbContext);
 }
-if (app.Environment.IsDevelopment())
-{   
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
