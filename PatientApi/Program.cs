@@ -42,6 +42,8 @@ builder.Services.AddInfrastructure(patientDbString, isSqLite);
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePatientCommandValidator>();
 builder.Services.AddFluentValidationAutoValidation(); // automatic integration with [ApiController]
 
+Console.WriteLine($"[DEBUG] UseSqlite = {isSqLite}");
+Console.WriteLine($"[DEBUG] Connection string = {patientDbString}");
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
