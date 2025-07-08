@@ -35,7 +35,7 @@ if (string.IsNullOrWhiteSpace(patientDbString))
 {
     throw new ArgumentNullException("ConnectionString nem található!");
 }
-var isSqLite = config.GetValue<bool>("UseSqlite", false);
+var isSqLite = config.GetValue<bool>("UseSqlite", true);
 
 builder.Services.AddInfrastructure(patientDbString, isSqLite);
 
