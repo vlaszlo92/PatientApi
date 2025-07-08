@@ -12,12 +12,13 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
             .HasColumnType("uniqueidentifier");
 
         builder.Property(p => p.HealthInsuranceNumber)
-            .IsRequired()
-            .HasMaxLength(11)
-            .HasColumnType("nvarchar(11)");
+         .HasMaxLength(11)
+         .HasColumnType("nvarchar(11)")
+         .IsRequired();
 
         builder.HasIndex(p => p.HealthInsuranceNumber)
             .IsUnique();
+
 
         builder.Property(p => p.Name)
             .IsRequired()
