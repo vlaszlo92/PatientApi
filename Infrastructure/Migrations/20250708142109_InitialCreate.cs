@@ -15,12 +15,13 @@ namespace Infrastructure.Migrations
                 name: "Patients",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    HealthInsuranceNumber = table.Column<string>(type: "TEXT", maxLength: 11, nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Complaints = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false),
-                    Diagnosis = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HealthInsuranceNumber = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Complaints = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Diagnosis = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
