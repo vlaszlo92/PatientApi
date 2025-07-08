@@ -36,8 +36,7 @@ if (string.IsNullOrWhiteSpace(patientDbString))
     throw new ArgumentNullException("ConnectionString nem található!");
 }
 var isSqLite = config.GetValue<bool>("UseSqlite", true);
-
-builder.Services.AddInfrastructure(patientDbString, isSqLite);
+builder.Services.AddInfrastructure(patientDbString, isSqLite, builder.Environment);
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePatientCommandValidator>();
 builder.Services.AddFluentValidationAutoValidation(); // automatic integration with [ApiController]
