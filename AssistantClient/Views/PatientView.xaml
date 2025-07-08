@@ -1,0 +1,164 @@
+﻿<UserControl
+    x:Class="AssistantClient.Views.PatientView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:AssistantClient.ViewModels"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="av"
+    Loaded="UserControl_Loaded"
+    Background="#1E1E1E">
+
+    <UserControl.Resources>
+        <Style x:Key="PagingButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#444"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#5A5A5A"/>
+                    <Setter Property="BorderBrush" Value="#666"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#333"/>
+                    <Setter Property="BorderBrush" Value="#555"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#777"/>
+                    <Setter Property="Background" Value="#2D2D30"/>
+                    <Setter Property="BorderBrush" Value="#2D2D30"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Betegfelvételi űrlap -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Név" Foreground="White" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C"/>
+
+            <TextBlock Text="Lakcím" Foreground="White" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C"/>
+
+            <TextBlock Text="TAJ-szám (123-123-123)" Foreground="White" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding HealthInsuranceNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C"/>
+
+            <TextBlock Text="Panasz" Foreground="White" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding Complaints, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C"/>
+
+            <Button Content="Mentés" Command="{Binding SubmitCommand}" Margin="0,20,0,0"
+                    Width="120" HorizontalAlignment="Left"
+                    Background="#007ACC" Foreground="White" BorderBrush="#007ACC"
+                    FontWeight="Bold" Padding="6,3"/>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="LightGreen" FontWeight="Bold" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <!-- Táblázatos pácienslista fejléccel -->
+        <Grid Grid.Row="1" Margin="0,30,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Cím + Frissítés -->
+                <RowDefinition Height="Auto"/>
+                <!-- Fejléc -->
+                <RowDefinition Height="*"/>
+                <!-- Lista -->
+                <RowDefinition Height="Auto"/>
+                <!-- Lapozó -->
+            </Grid.RowDefinitions>
+
+            <!-- Cím + Frissítés gomb -->
+            <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <TextBlock Text="Legutóbbi páciensek:" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Content="Frissítés" Command="{Binding RefreshCommand}" Margin="20,0,0,0"
+                        Background="#444" Foreground="White" Padding="6,2" />
+            </StackPanel>
+
+            <!-- Fejléc sor -->
+            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0,0,0,1">
+                <Grid Background="#3A3A3D">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Név" Grid.Column="0" Foreground="LightGray" FontWeight="Bold"/>
+                    <TextBlock Text="Lakcím" Grid.Column="1" Foreground="LightGray" FontWeight="Bold"/>
+                    <TextBlock Text="TAJ" Grid.Column="2" Foreground="LightGray" FontWeight="Bold"/>
+                    <TextBlock Text="Panasz" Grid.Column="3" Foreground="LightGray" FontWeight="Bold"/>
+                    <TextBlock Text="Diagnózis" Grid.Column="4" Foreground="LightGray" FontWeight="Bold"/>
+                    <TextBlock Text="Felvétel dátuma" Grid.Column="5" Foreground="LightGray" FontWeight="Bold"/>
+                </Grid>
+            </Border>
+
+            <!-- Lista -->
+            <ScrollViewer Grid.Row="2"
+                          Height="300"
+                          VerticalScrollBarVisibility="Auto"
+                          Background="#2D2D30" VerticalAlignment="Top">
+                <ItemsControl ItemsSource="{Binding Patients}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#444" BorderThickness="0,0,0,1" Padding="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" Grid.Column="0" Foreground="White"/>
+                                    <TextBlock Text="{Binding Address}" Grid.Column="1" Foreground="White" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Address}"/>
+                                    <TextBlock Text="{Binding HealthInsuranceNumber}" Grid.Column="2" Foreground="White"/>
+                                    <TextBlock Text="{Binding Complaints}"
+                                               Grid.Column="3"
+                                               Foreground="White"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxHeight="60"
+                                               ToolTip="{Binding Complaints}"/>
+                                    <TextBlock Text="{Binding Diagnosis}" Grid.Column="4" Foreground="White" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Diagnosis}"/>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat=\{0:yyyy.MM.dd HH:mm\}}" Grid.Column="5" Foreground="White"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Lapozó gombok -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Content="◀ Előző"
+                    Command="{Binding PreviousPageCommand}"
+                    Style="{StaticResource PagingButtonStyle}" />
+                <TextBlock Text="{Binding CurrentPage}" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBlock Text="/" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalPages}" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                <Button Content="Következő ▶"
+                    Command="{Binding NextPageCommand}"
+                    Style="{StaticResource PagingButtonStyle}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

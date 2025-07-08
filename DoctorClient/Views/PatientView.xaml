@@ -1,0 +1,130 @@
+﻿<UserControl
+    x:Class="DoctorClient.Views.PatientView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:DoctorClient.ViewModels"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="av"
+    Loaded="UserControl_Loaded"
+    Background="#1E1E1E">
+
+    <UserControl.Resources>
+        <Style x:Key="PagingButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#444"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#5A5A5A"/>
+                    <Setter Property="BorderBrush" Value="#666"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#333"/>
+                    <Setter Property="BorderBrush" Value="#555"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#777"/>
+                    <Setter Property="Background" Value="#2D2D30"/>
+                    <Setter Property="BorderBrush" Value="#2D2D30"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="30">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Bal oldal: Lista fejléc + lista -->
+        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Érkezési sorrend:" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Content="Frissítés"
+                        Command="{Binding RefreshCommand}"
+                        Margin="20,0,0,0"
+                        Background="#444"
+                        Foreground="White"
+                        Padding="6,2"/>
+            </StackPanel>
+
+            <!-- Lista görgetéssel -->
+            <ListView ItemsSource="{Binding Patients}"
+                  SelectedItem="{Binding SelectedPatient, Mode=TwoWay}"
+                  Background="#2D2D30"
+                  BorderBrush="#444"
+                  Foreground="White"
+                  Height="300"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Név" Width="150" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="TAJ-szám" Width="120" DisplayMemberBinding="{Binding HealthInsuranceNumber}" />
+                        <GridViewColumn Header="Utolsó módosítás" Width="160">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:yyyy.MM.dd HH:mm}}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <!-- Lapozás -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Content="◀ Előző"
+            Command="{Binding PreviousPageCommand}"
+            Style="{StaticResource PagingButtonStyle}"
+            IsEnabled="{Binding HasPreviousPage}" />
+
+                <TextBlock Text="{Binding CurrentPage}" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBlock Text="/" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalPages}" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+
+                <Button Content="Következő ▶"
+            Command="{Binding NextPageCommand}"
+            Style="{StaticResource PagingButtonStyle}"
+            IsEnabled="{Binding HasNextPage}" />
+            </StackPanel>
+
+        </StackPanel>
+
+        <!-- Jobb oldal: Páciens részletek -->
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="Név:" Foreground="White" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedPatient.Name}" IsReadOnly="True"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C" Margin="0,5"/>
+
+            <TextBlock Text="TAJ-szám:" Foreground="White" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedPatient.HealthInsuranceNumber}" IsReadOnly="True"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C" Margin="0,5"/>
+
+            <TextBlock Text="Panasz:" Foreground="White" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedPatient.Complaints}" IsReadOnly="True"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C" Margin="0,5"/>
+
+            <TextBlock Text="Diagnózis:" Foreground="White" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedPatient.Diagnosis, UpdateSourceTrigger=PropertyChanged}"
+                     Background="#2D2D30" Foreground="White" BorderBrush="#3C3C3C" Margin="0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Button Content="Mentés"
+                        Command="{Binding SaveDiagnosisCommand}"
+                        Style="{StaticResource PagingButtonStyle}"/>
+                <Button Content="Törlés"
+                        Command="{Binding DeleteCommand}"
+                        Style="{StaticResource PagingButtonStyle}"
+                        Background="DarkRed" BorderBrush="DarkRed"/>
+            </StackPanel>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="LightGreen" FontWeight="Bold" Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

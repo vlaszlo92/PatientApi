@@ -1,0 +1,61 @@
+using PatientApi.Controllers;
+using Application.DependencyInjection;
+using Infrastructure.DependencyInjection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Application.Patients.Commands.CreatePatient;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Persistence.Data;
+using Infrastructure.Persistence.Seed;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddControllers()
+    .AddApplicationPart(typeof(PatientsController).Assembly);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// saját DI extension metódusaink
+var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+builder.Services.AddSingleton<IConfiguration>(config);
+builder.Services.AddApplication(); // Te hozod létre
+
+var patientDbString = config.GetConnectionString("patientdb");
+
+if (string.IsNullOrWhiteSpace(patientDbString))
+{
+    throw new ArgumentNullException("ConnectionString nem található!");
+}
+var isSqLite = config.GetValue<bool>("UseSqlite", true);
+
+builder.Services.AddInfrastructure(patientDbString, isSqLite);
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePatientCommandValidator>();
+builder.Services.AddFluentValidationAutoValidation(); // automatic integration with [ApiController]
+
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    dbContext.Database.Migrate();
+    await DbSeeder.SeedAsync(dbContext);
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
