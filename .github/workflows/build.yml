@@ -17,10 +17,10 @@ jobs:
     - name: .NET telepítése
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
 
     - name: Függőségek visszaállítása
-      run: dotnet restore
+      run: dotnet restore PatientApi.sln
 
     - name: Megoldás buildelése
       run: dotnet build PatientApi.sln --no-restore --configuration Release
