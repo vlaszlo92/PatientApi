@@ -1,0 +1,35 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+    - name: Kód letöltése
+      uses: actions/checkout@v3
+
+    - name: .NET SDK telepítése
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore
+      run: dotnet restore PatientApi/PatientApi.csproj
+
+    - name: Build
+      run: dotnet build PatientApi/PatientApi.csproj --configuration Release --no-restore
+
+    - name: Publish WebAPI
+      run: dotnet publish PatientApi/PatientApi.csproj -c Release -o ./publish
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'patient-api-demo'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
