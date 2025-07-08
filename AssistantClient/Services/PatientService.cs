@@ -9,11 +9,11 @@ namespace AssistantClient.Services;
 
 public class PatientService : IPatientService
 {
-    private readonly HttpClient? _client;
+    private readonly HttpClient _client; // Changed from nullable to non-nullable  
     private readonly bool _useMock;
     public PatientService(IConfiguration config)
     {
-        var env = config["Environment"];
+        var env = config["Environment"] ?? throw new ArgumentNullException(nameof(config), "Environment configuration is missing.");
         var baseUrl = config["ApiBaseUrl"];
 
         _useMock = env.Equals("Development", StringComparison.OrdinalIgnoreCase);
@@ -24,6 +24,10 @@ public class PatientService : IPatientService
                 throw new InvalidOperationException("ApiBaseUrl nincs beállítva az appsettings.json fájlban.");
 
             _client = new HttpClient { BaseAddress = new Uri(baseUrl) };
+        }
+        else
+        {
+            _client = new HttpClient();
         }
     }
     public async Task<GetPatientsResult> GetPatientsAsync(int page = 1, int pageSize = 10)
@@ -49,13 +53,12 @@ public class PatientService : IPatientService
             };
         }
 
-        var response = await _client!.GetAsync($"/api/v1/patients?page={page}&pageSize={pageSize}");
+        var response = await _client.GetAsync($"/api/v1/patients?page={page}&pageSize={pageSize}");
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<GetPatientsResult>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
-
 
     public async Task<bool> AddPatientAsync(PatientDto patient)
     {
@@ -67,7 +70,7 @@ public class PatientService : IPatientService
             return true;
         }
 
-        var response = await _client!.PostAsJsonAsync("api/v1/patients", patient);
+        var response = await _client.PostAsJsonAsync("api/v1/patients", patient);
 
         if (!response.IsSuccessStatusCode)
         {

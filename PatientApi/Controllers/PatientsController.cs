@@ -43,9 +43,8 @@ public class PatientsController : ControllerBase
 
     // GET: /api/v1/patients/{id}
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public IActionResult GetById([FromRoute] Guid id)
     {
-        // Bővíthető, ha létrehozunk később GetPatientByIdQuery-t
         return NotFound("A GET /api/patients/{id} még nincs implementálva.");
     }
 

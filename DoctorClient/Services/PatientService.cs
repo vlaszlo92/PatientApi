@@ -22,7 +22,7 @@ public class PatientService : IPatientService
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        var env = config["Environment"];
+        var env = config["Environment"] ?? throw new ArgumentNullException(nameof(config), "Environment configuration is missing.");
         var baseUrl = config["ApiBaseUrl"];
 
         _useMock = env.Equals("Development", StringComparison.OrdinalIgnoreCase);
@@ -33,6 +33,10 @@ public class PatientService : IPatientService
                 throw new InvalidOperationException("ApiBaseUrl nincs beállítva az appsettings.json fájlban.");
 
             _client = new HttpClient { BaseAddress = new Uri(baseUrl) };
+        }
+        else
+        {
+            _client = new HttpClient();
         }
     }
 

@@ -8,5 +8,5 @@ public class Patient
     public string Complaints { get; set; } = default!;
     public string? Diagnosis { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string Address { get; set; }
+    public string Address { get; set; } = default!;
 }
