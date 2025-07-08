@@ -15,7 +15,7 @@ namespace Infrastructure.Migrations
                 name: "Patients",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HealthInsuranceNumber = table.Column<string>(type: "TEXT", maxLength: 11, nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Complaints = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false),

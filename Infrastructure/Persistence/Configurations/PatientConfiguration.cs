@@ -8,7 +8,8 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 {
     public void Configure(EntityTypeBuilder<Patient> builder)
     {
-        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id)
+            .HasColumnType("uniqueidentifier");
 
         builder.Property(p => p.HealthInsuranceNumber)
             .IsRequired()
