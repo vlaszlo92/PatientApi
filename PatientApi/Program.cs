@@ -21,12 +21,15 @@ builder.Services.AddSwaggerGen();
 var config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
 builder.Services.AddSingleton<IConfiguration>(config);
 builder.Services.AddApplication(); // Te hozod létre
 
-var patientDbString = config.GetConnectionString("patientdb");
+var patientDbString = config.GetConnectionString("DefaultConnection")
+                     ?? config.GetConnectionString("patientdb");
 
 if (string.IsNullOrWhiteSpace(patientDbString))
 {
@@ -44,12 +47,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    dbContext.Database.Migrate();
-    await DbSeeder.SeedAsync(dbContext);
-
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+        await DbSeeder.SeedAsync(dbContext);
+    }
     app.UseSwagger();
     app.UseSwaggerUI();
 }
